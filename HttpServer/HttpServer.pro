@@ -3,7 +3,22 @@ CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    server/Server.cpp \
+    server/config/ConfigParser.cpp
+
+HEADERS += \
+    Config.h \
+    ConfigParser.h \
+    Server.h \
+    ConfigOpenError.h \
+    ConfigParseError.h \
+    server/Server.h \
+    server/config/Config.h \
+    server/config/ConfigOpenError.h \
+    server/config/ConfigParseError.h \
+    server/config/ConfigParser.h
+
 
 QMAKE_CXXFLAGS += -std=c++14 \
 		    -pthread \
