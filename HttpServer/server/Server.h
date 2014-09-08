@@ -2,6 +2,7 @@
 #define SERVER_H
 
 #include "config/Config.h"
+#include "fs/FileSupplier.h"
 
 class Server
 {
@@ -14,6 +15,7 @@ public:
 
 private:
     Config config;
+    FileSupplier supplier;
 };
 
 #endif // SERVER_H

@@ -5,7 +5,9 @@ CONFIG -= qt
 
 SOURCES += main.cpp \
     server/Server.cpp \
-    server/config/ConfigParser.cpp
+    server/config/ConfigParser.cpp \
+    server/fs/FileSupplier.cpp \
+    server/fs/File.cpp
 
 HEADERS += \
     Config.h \
@@ -17,7 +19,11 @@ HEADERS += \
     server/config/Config.h \
     server/config/ConfigOpenError.h \
     server/config/ConfigParseError.h \
-    server/config/ConfigParser.h
+    server/config/ConfigParser.h \
+    server/fs/FileSupplier.h \
+    server/fs/File.h \
+    server/fs/FileNotFoundError.h \
+    server/fs/FileNotInRootError.h
 
 
 QMAKE_CXXFLAGS += -std=c++14 \
@@ -39,7 +45,8 @@ win32 {
     INCLUDEPATH += C:/Projects/Qt/boost_1_56_0
     LIBS += -LC:/Projects/Qt/boost_1_56_0/stage/lib/ \
 	-lws2_32
-    LIBS += C:/Projects/Qt/boost_1_56_0/stage/lib/libboost_system-mgw49-mt-1_56.a
+    LIBS += C:/Projects/Qt/boost_1_56_0/stage/lib/libboost_system-mgw49-mt-1_56.a \
+	    C:/Projects/Qt/boost_1_56_0/stage/lib/libboost_filesystem-mgw49-mt-1_56.a
 }
 
 CONFIG(debug, debug|release) {
