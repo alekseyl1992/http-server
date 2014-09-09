@@ -7,7 +7,9 @@ SOURCES += main.cpp \
     server/Server.cpp \
     server/config/ConfigParser.cpp \
     server/fs/FileSupplier.cpp \
-    server/fs/File.cpp
+    server/fs/File.cpp \
+    server/http/request/RequestParser.cpp \
+    server/http/response/ResponseBuilder.cpp
 
 HEADERS += \
     Config.h \
@@ -23,7 +25,12 @@ HEADERS += \
     server/fs/FileSupplier.h \
     server/fs/File.h \
     server/fs/FileNotFoundError.h \
-    server/fs/FileNotInRootError.h
+    server/fs/FileNotInRootError.h \
+    server/http/request/RequestParser.h \
+    server/http/request/Request.h \
+    server/http/request/RequestParseError.h \
+    server/http/response/Response.h \
+    server/http/response/ResponseBuilder.h
 
 
 QMAKE_CXXFLAGS += -std=c++14 \
