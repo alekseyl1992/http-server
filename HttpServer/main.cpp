@@ -6,6 +6,7 @@
 
 #include "server/Server.h"
 
+#ifndef TESTS_RUN
 int main(int argc, char* argv[])
 {
     std::cout << "Configuring..." << std::endl;
@@ -30,3 +31,4 @@ int main(int argc, char* argv[])
     std::cout << "Stopping server..." << std::endl;;
     server.stop();
 }
+#endif
