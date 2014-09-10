@@ -10,7 +10,7 @@ class ResponseBuilder
 public:
     const ResponseBuilder &getInstance();
 
-    Response build(unsigned int code, std::string bodyExtension, const char *body, usize_t bodySize);
+    Response build(unsigned int code, std::string bodyExtension, const char *body, size_t bodySize);
     Response buildDefaultPage(unsigned int code, std::string info = "");
 
 private:
@@ -19,11 +19,13 @@ private:
 
     ResponseBuilder *instance = nullptr;
 
-    std::string getDefaultPage(int code, std::string info);
-    std::string getMimeType(std::string extension);
+    std::string getDefaultPage(unsigned int code, std::string info) const;
+    std::string getMimeType(std::string extension) const;
+
+    std::string getDate() const;
 
     std::map<std::string, std::string> extToMime;
-    std::map<std::string, std::string> defaultPages;
+    std::map<unsigned int, std::string> defaultPages;
 };
 
 #endif // REQUESTPARSER_H

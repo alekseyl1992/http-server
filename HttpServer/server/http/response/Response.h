@@ -1,10 +1,12 @@
 #ifndef RESPONSE_H
 #define RESPONSE_H
 
+#include <string>
+
 class Response
 {
 public:
-    Response(const std::string &headers, char *body, size_t bodySize);
+    Response(const std::string &headers, const char *body, size_t bodySize);
     ~Response();
 
     const char *getData() const;
