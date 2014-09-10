@@ -11,7 +11,8 @@ SOURCES += main.cpp \
     server/http/request/RequestParser.cpp \
     server/http/response/ResponseBuilder.cpp \
     TestRunner.cpp \
-    test/http/request/RequestParserTest.cpp
+    test/http/request/RequestParserTest.cpp \
+    server/http/response/Response.cpp
 
 HEADERS += \
     Config.h \
@@ -46,8 +47,9 @@ QMAKE_LFLAGS += -std=c++14 \
 
 unix {
     LIBS += -L/usr/local/lib \
-	    -lboost_system
-
+            -lboost_system \
+            -lboost_filesystem \
+            -lboost_test_exec_monitor
 }
 
 win32 {
