@@ -46,6 +46,22 @@ BOOST_AUTO_TEST_CASE(httpWrongRequestTest)
     BOOST_CHECK_THROW(RequestParser::parse(requestStr), RequestParseError);
 }
 
+BOOST_AUTO_TEST_CASE(httpUrlDecodeTest)
+{
+    std::string requestStr = "GET /index.html?q=20%2B10-3%3A20%26 HTTP/1.1\r\n\r\n";
+    std::string decodedUri = RequestParser::parse(requestStr).uri;
+
+    BOOST_CHECK(decodedUri == "/index.html?q=20+10-3:20&");
+}
+
+BOOST_AUTO_TEST_CASE(httpUrlDecodeSpacesTest)
+{
+    std::string requestStr = "GET /one%20plus%20one.test HTTP/1.1\r\n\r\n";
+    std::string decodedUri = RequestParser::parse(requestStr).uri;
+
+    BOOST_CHECK(decodedUri == "/one plus one.test");
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 #endif
