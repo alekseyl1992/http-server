@@ -1,10 +1,13 @@
 #ifndef SERVER_H
 #define SERVER_H
 
+#include <boost/noncopyable.hpp>
 #include "config/Config.h"
 #include "fs/FileSupplier.h"
+#include "ServicePool.h"
 
 class Server
+        : public boost::noncopyable
 {
 public:
     explicit Server(const Config &config);
@@ -15,7 +18,8 @@ public:
 
 private:
     Config config;
-    FileSupplier supplier;
+    FileSupplier fileSupplier;
+    ServicePool servicePool;
 };
 
 #endif // SERVER_H

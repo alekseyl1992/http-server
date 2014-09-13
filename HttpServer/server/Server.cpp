@@ -3,18 +3,20 @@
 #include <iostream>
 
 Server::Server(const Config &config)
-    : config(config), supplier(config.root)
+    : config(config)
+    , fileSupplier(config.root)
+    , servicePool(config.threadPoolSize)
 {
 }
 
 Server::~Server()
 {
-
+    servicePool.stopAll();
 }
 
 void Server::start()
 {
-
+    servicePool.startAll();
 
     std::cout << "Server started with configuration:"
               << std::endl

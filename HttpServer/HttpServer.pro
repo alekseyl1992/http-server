@@ -12,7 +12,8 @@ SOURCES += main.cpp \
     server/http/response/ResponseBuilder.cpp \
     TestRunner.cpp \
     test/http/request/RequestParserTest.cpp \
-    server/http/response/Response.cpp
+    server/http/response/Response.cpp \
+    server/ServicePool.cpp
 
 HEADERS += \
     Config.h \
@@ -33,7 +34,8 @@ HEADERS += \
     server/http/request/Request.h \
     server/http/request/RequestParseError.h \
     server/http/response/Response.h \
-    server/http/response/ResponseBuilder.h
+    server/http/response/ResponseBuilder.h \
+    server/ServicePool.h
 
 
 QMAKE_CXXFLAGS += -std=c++14 \

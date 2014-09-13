@@ -11,12 +11,17 @@ struct Config
 
     std::string root = "./";
 
+    size_t threadPoolSize = 8;
+    size_t cacheSize = 1024*1024*1024;
+
     std::string toString() const
     {
         std::stringstream ss;
         ss << "ip: "    << ip   << std::endl
            << "port: "  << port << std::endl
-           << "root: "  << root << std::endl;
+           << "root: "  << root << std::endl
+           << "threadPoolSize: "  << threadPoolSize << std::endl
+           << "cacheSize: "  << cacheSize << std::endl;
 
         return ss.str();
     }
