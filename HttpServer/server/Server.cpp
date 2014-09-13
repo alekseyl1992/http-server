@@ -18,6 +18,8 @@ void Server::start()
 {
     servicePool.startAll();
 
+    acceptor = std::make_shared<asio::ip::tcp::acceptor>(servicePool.getService());
+
     std::cout << "Server started with configuration:"
               << std::endl
               << config.toString()

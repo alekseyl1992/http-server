@@ -2,7 +2,6 @@
 
 #include <memory>
 #include <functional>
-#include <boost/asio.hpp>
 
 ServicePool::ServicePool(size_t servicesCount)
 {
@@ -29,16 +28,15 @@ void ServicePool::startAll()
 
 void ServicePool::stopAll()
 {
-    while (!serviceWorks.empty())
-        serviceWorks.pop_front();
+    serviceWorks.clear();
 }
 
-io_service_ptr ServicePool::getService()
+asio::io_service &ServicePool::getService()
 {
     io_service_ptr service = services.front();
 
     services.push_back(services.front());
     services.pop_front();
 
-    return service;
+    return *service;
 }

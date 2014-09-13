@@ -13,7 +13,8 @@ SOURCES += main.cpp \
     TestRunner.cpp \
     test/http/request/RequestParserTest.cpp \
     server/http/response/Response.cpp \
-    server/ServicePool.cpp
+    server/ServicePool.cpp \
+    server/Connection.cpp
 
 HEADERS += \
     Config.h \
@@ -35,7 +36,9 @@ HEADERS += \
     server/http/request/RequestParseError.h \
     server/http/response/Response.h \
     server/http/response/ResponseBuilder.h \
-    server/ServicePool.h
+    server/ServicePool.h \
+    server/common.h \
+    server/Connection.h
 
 
 QMAKE_CXXFLAGS += -std=c++14 \
@@ -58,9 +61,12 @@ win32 {
     INCLUDEPATH += C:/Projects/Qt/boost_1_56_0
     LIBS += -LC:/Projects/Qt/boost_1_56_0/stage/lib/ \
 	-lws2_32
-    LIBS += C:/Projects/Qt/boost_1_56_0/stage/lib/libboost_system-mgw49-mt-1_56.a \
-	    C:/Projects/Qt/boost_1_56_0/stage/lib/libboost_filesystem-mgw49-mt-1_56.a \
-	    C:/Projects/Qt/boost_1_56_0/stage/lib/libboost_test_exec_monitor-mgw49-mt-1_56.a
+    LIBS += -LC:/Projects/Qt/boost_1_56_0/stage/lib/ \
+	    -lboost_system-mgw49-mt-1_56 \
+	    -lboost_filesystem-mgw49-mt-1_56 \
+	    -lboost_test_exec_monitor-mgw49-mt-1_56 \
+	    -lboost_regex-mgw49-mt-1_56 \
+	    -lboost_thread-mgw49-mt-1_56
 }
 
 CONFIG(debug, debug|release) {
