@@ -50,7 +50,7 @@ void Server::acceptHandler(boost::shared_ptr<Connection> connection,
 }
 
 void Server::acceptNextClient() {
-    auto connection = Connection::create(servicePool.getService());
+    auto connection = Connection::create(servicePool.getService(), fileSupplier);
     acceptor->async_accept(connection->getSocket(),
                           boost::bind(&Server::acceptHandler,
                                       this,

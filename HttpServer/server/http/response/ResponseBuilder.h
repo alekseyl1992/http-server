@@ -11,9 +11,17 @@ class ResponseBuilder
 public:
     static ResponseBuilder &getInstance();
 
-    Response build(ushort status, std::string bodyExtension, const char *body, size_t bodySize);
+    Response build(ushort status, std::string bodyExtension, const char *body, size_t bodySize, size_t fileSize);
     Response buildDefaultPage(ushort status, std::string info = "");
 
+    enum Status : ushort {
+        OK = 200,
+        BAD_REQUEST = 400,
+        FORBIDDEN = 403,
+        NOT_FOUND = 404,
+        METHOD_NOT_ALLOWED = 405,
+        INTERNAL_SERVER_ERROR = 500
+    };
 private:
     ResponseBuilder();
     ResponseBuilder(const &ResponseBuilder) = delete;

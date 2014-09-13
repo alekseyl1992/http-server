@@ -30,20 +30,20 @@ ResponseBuilder::ResponseBuilder()
     extToMime["swf"] = "application/x-shockwave-flash";
 
     //error pages setup
-    defaultPages.insert({200, "OK, but no body in response"});
-    defaultPages.insert({400, "Bad request. Very bad request!"});
-    defaultPages.insert({403, "Go away!"});
-    defaultPages.insert({404, "Such page. So not found. Wow!"});
-    defaultPages.insert({405, "Method not allowed"});
-    defaultPages.insert({500, "Internal Server Error"});
+    defaultPages.insert({OK, "OK, but no body in response"});
+    defaultPages.insert({BAD_REQUEST, "Bad request. Very bad request!"});
+    defaultPages.insert({FORBIDDEN, "Go away!"});
+    defaultPages.insert({NOT_FOUND, "Such page. So not found. Wow!"});
+    defaultPages.insert({METHOD_NOT_ALLOWED, "Method not allowed"});
+    defaultPages.insert({INTERNAL_SERVER_ERROR, "Internal Server Error"});
 
     //status names setup
-    statusNames.insert({200, "OK"});
-    statusNames.insert({400, "Bad request"});
-    statusNames.insert({403, "Go away!"});
-    statusNames.insert({404, "Such page. So not found. Wow!"});
-    statusNames.insert({405, "Method not allowed"});
-    statusNames.insert({500, "Internal Server Error"});
+    statusNames.insert({OK, "OK"});
+    statusNames.insert({BAD_REQUEST, "Bad request"});
+    statusNames.insert({FORBIDDEN, "Go away!"});
+    statusNames.insert({NOT_FOUND, "Such page. So not found. Wow!"});
+    statusNames.insert({METHOD_NOT_ALLOWED, "Method not allowed"});
+    statusNames.insert({INTERNAL_SERVER_ERROR, "Internal Server Error"});
 }
 
 std::string ResponseBuilder::getDefaultPage(ushort status, std::string info) const
@@ -73,7 +73,7 @@ std::string ResponseBuilder::getMimeType(std::string extension) const
     return mime->second;
 }
 
-Response ResponseBuilder::build(ushort status, std::string bodyExtension, const char *body, size_t bodySize)
+Response ResponseBuilder::build(ushort status, std::string bodyExtension, const char *body, size_t bodySize, size_t fileSize)
 {
     std::stringstream headers;
     const char *delimiter = "\r\n";
@@ -82,7 +82,7 @@ Response ResponseBuilder::build(ushort status, std::string bodyExtension, const 
 
     headers << "Date: "              << getDate()           << delimiter;
     headers << "Server: "            << "HttpServer/1.1"    << delimiter;
-    headers << "Content-Length: "    << bodySize            << delimiter;
+    headers << "Content-Length: "    << fileSize            << delimiter;
     headers << "Content-Type: "      << getMimeType(bodyExtension) << delimiter;
     headers << "Connection: "        << "close"             << delimiter;
 
@@ -96,7 +96,7 @@ Response ResponseBuilder::build(ushort status, std::string bodyExtension, const 
 Response ResponseBuilder::buildDefaultPage(ushort status, std::string info)
 {
     std::string page = getDefaultPage(status, info);
-    return build(status, "", page.c_str(), page.size());
+    return build(status, "", page.c_str(), page.size(), page.size());
 }
 
 std::string ResponseBuilder::getDate() const
@@ -105,10 +105,12 @@ std::string ResponseBuilder::getDate() const
     time(&rawtime);
     struct tm *ptm = gmtime(&rawtime);
 
-    char buffer[30]; //29-chars fixed-length format date + \0
+    //29-chars fixed-length format date + \0
     //ex: Sun, 06 Nov 1994 08:49:37 GMT
+    constexpr size_t bufferSize = 30;
+    char buffer[bufferSize];
 
-    strftime(buffer, 80, "%a, %d %b %Y %X GMT", ptm);
+    strftime(buffer, bufferSize, "%a, %d %b %Y %X GMT", ptm);
 
     return std::string(buffer);
 }

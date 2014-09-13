@@ -11,7 +11,7 @@ class FileSupplier
 {
 public:
     FileSupplier(const std::string &rootPath);
-    File getFile(const std::string &fileName);
+    File getFile(const std::string &fileName, bool justGetSize);
 
 private:
     boost::filesystem::path root;

@@ -9,9 +9,12 @@
 #include "http/response/ResponseBuilder.h"
 #include "http/response/Response.h"
 #include "http/request/RequestParseError.h"
+#include "fs/FileSupplier.h"
+#include "fs/FileNotFoundError.h"
+#include "fs/FileNotInRootError.h"
 
-Connection::Connection(asio::io_service &service)
-    : socket(service)
+Connection::Connection(asio::io_service &service, FileSupplier &fileSupplier)
+    : fileSupplier(fileSupplier), socket(service)
 {
 }
 
@@ -20,9 +23,9 @@ asio::ip::tcp::socket &Connection::getSocket()
     return socket;
 }
 
-boost::shared_ptr<Connection> Connection::create(asio::io_service &service)
+boost::shared_ptr<Connection> Connection::create(asio::io_service &service, FileSupplier &fileSupplier)
 {
-    return boost::shared_ptr<Connection>(new Connection(service));
+    return boost::shared_ptr<Connection>(new Connection(service, fileSupplier));
 }
 
 void Connection::start()
@@ -51,13 +54,38 @@ void Connection::readHandler(const boost::system::error_code &error, size_t byte
     }
     catch (const RequestParseError &e) {
         std::cout << "RequestParseError: " << e.what() << std::endl;
+
+        const Response &response = ResponseBuilder::getInstance()
+                .buildDefaultPage(ResponseBuilder::BAD_REQUEST);
+        sendResponse(response);
+
         return;
     }
 
-    const Response &response = ResponseBuilder::getInstance().buildDefaultPage(200, request.uri);
+    try {
+        const File &file = fileSupplier.getFile(request.uri, request.method == Request::HEAD);
 
+        const Response &response = ResponseBuilder::getInstance()
+                .build(ResponseBuilder::OK, file.getExtension(),
+                       file.getData(), file.getSize(),
+                       request.method == Request::HEAD ? 0 : file.getSize());
 
+        sendResponse(response);
+    }
+    catch (const FileNotInRootError &e) {
+        const Response &response = ResponseBuilder::getInstance()
+                .buildDefaultPage(ResponseBuilder::FORBIDDEN);
+        sendResponse(response);
+    }
+    catch (const FileNotFoundError &e) {
+        const Response &response = ResponseBuilder::getInstance()
+                .buildDefaultPage(ResponseBuilder::NOT_FOUND);
+        sendResponse(response);
+    }
+}
 
+void Connection::sendResponse(const Response &response)
+{
     asio::async_write(socket,
                       asio::buffer(response.getData(), response.getSize()),
                       boost::bind(&Connection::writeHandler,

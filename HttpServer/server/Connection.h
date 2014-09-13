@@ -3,11 +3,13 @@
 
 #include <boost/enable_shared_from_this.hpp>
 #include "asio_common.h"
+#include "http/response/Response.h"
+#include "fs/FileSupplier.h"
 
 class Connection : public boost::enable_shared_from_this<Connection>
 {
 public:
-    static boost::shared_ptr<Connection> create(asio::io_service &service);
+    static boost::shared_ptr<Connection> create(asio::io_service &service, FileSupplier &fileSupplier);
 
     asio::ip::tcp::socket &getSocket();
 
@@ -18,8 +20,12 @@ public:
     void readHandler(const boost::system::error_code& error,
                      size_t bytesTransferred);
 
+    void sendResponse(const Response &response);
+
 private:
-    Connection(asio::io_service &service);
+    Connection(asio::io_service &service, FileSupplier &fileSupplier);
+
+    FileSupplier &fileSupplier;
 
     asio::ip::tcp::socket socket;
     asio::streambuf readBuffer;

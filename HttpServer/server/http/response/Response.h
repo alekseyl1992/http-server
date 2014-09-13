@@ -2,6 +2,7 @@
 #define RESPONSE_H
 
 #include <string>
+#include "../../common.h"
 
 class Response
 {

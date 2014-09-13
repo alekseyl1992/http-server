@@ -5,18 +5,24 @@
 
 #include "FileNotFoundError.h"
 
-File::File(const std::string &path)
+File::File(const std::string &path, const std::string &extension, bool justGetSize)
+    : extension(extension)
 {
-    open(path);
+    open(path, justGetSize);
 }
 
-void File::open(const std::string &path)
+void File::open(const std::string &path, bool justGetSize)
 {
     std::ifstream fs(path, std::ios::in | std::ios::binary | std::ios::ate);
 
     if (fs.is_open())
     {
         size = fs.tellg();
+        if (justGetSize) {
+            fs.close();
+            return;
+        }
+
         data = new char[size];
         fs.seekg(0, std::ios::beg);
         fs.read(data, size);
@@ -34,6 +40,11 @@ char *File::getData() const
 unsigned long File::getSize() const
 {
     return size;
+}
+
+std::string File::getExtension() const
+{
+    return extension;
 }
 
 
