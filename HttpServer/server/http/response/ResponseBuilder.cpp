@@ -2,8 +2,12 @@
 
 #include <sstream>
 #include <ctime>
+#include <iostream>
+#include "../../common.h"
 
-const ResponseBuilder &ResponseBuilder::getInstance()
+ResponseBuilder *ResponseBuilder::instance = nullptr;
+
+ResponseBuilder &ResponseBuilder::getInstance()
 {
     if (instance == nullptr)
         instance = new ResponseBuilder();
@@ -27,19 +31,37 @@ ResponseBuilder::ResponseBuilder()
 
     //error pages setup
     defaultPages.insert({200, "OK, but no body in response"});
+    defaultPages.insert({400, "Bad request. Very bad request!"});
     defaultPages.insert({403, "Go away!"});
     defaultPages.insert({404, "Such page. So not found. Wow!"});
     defaultPages.insert({405, "Method not allowed"});
     defaultPages.insert({500, "Internal Server Error"});
+
+    //status names setup
+    statusNames.insert({200, "OK"});
+    statusNames.insert({400, "Bad request"});
+    statusNames.insert({403, "Go away!"});
+    statusNames.insert({404, "Such page. So not found. Wow!"});
+    statusNames.insert({405, "Method not allowed"});
+    statusNames.insert({500, "Internal Server Error"});
 }
 
-std::string ResponseBuilder::getDefaultPage(unsigned int code, std::string info) const
+std::string ResponseBuilder::getDefaultPage(ushort status, std::string info) const
 {
-    auto page = defaultPages.find(code);
+    auto page = defaultPages.find(status);
     if (page == defaultPages.end())
-        return "No such page for such error: " + std::to_string(code);
+        return "No such page for such error: " + std::to_string(status);
 
     return page->second;
+}
+
+std::string ResponseBuilder::getStatusName(ushort status) const
+{
+    auto statusName = statusNames.find(status);
+    if (statusName == statusNames.end())
+        return "UNKNOWN";
+
+    return statusName->second;
 }
 
 std::string ResponseBuilder::getMimeType(std::string extension) const
@@ -51,22 +73,30 @@ std::string ResponseBuilder::getMimeType(std::string extension) const
     return mime->second;
 }
 
-Response ResponseBuilder::build(unsigned int code, std::string bodyExtension, const char *body, size_t bodySize)
+Response ResponseBuilder::build(ushort status, std::string bodyExtension, const char *body, size_t bodySize)
 {
     std::stringstream headers;
-    headers << "Date: "              << getDate();
-    headers << "Server: "            << "HttpServer/1.0";
-    headers << "Content-Length: "    << bodySize;
-    headers << "Content-Type: "      << getMimeType(bodyExtension);
-    headers << "Connection: "        << "close";
+    const char *delimiter = "\r\n";
+
+    headers << "HTTP/1.1 " << status << " " << getStatusName(status) << delimiter;
+
+    headers << "Date: "              << getDate()           << delimiter;
+    headers << "Server: "            << "HttpServer/1.1"    << delimiter;
+    headers << "Content-Length: "    << bodySize            << delimiter;
+    headers << "Content-Type: "      << getMimeType(bodyExtension) << delimiter;
+    headers << "Connection: "        << "close"             << delimiter;
+
+    headers << delimiter;
+
+    std::cout << "Response headers:" << std::endl << headers.str();
 
     return Response(headers.str(), body, bodySize);
 }
 
-Response ResponseBuilder::buildDefaultPage(unsigned int code, std::string info)
+Response ResponseBuilder::buildDefaultPage(ushort status, std::string info)
 {
-    std::string page = getDefaultPage(code, info);
-    return build(code, "", page.c_str(), page.size());
+    std::string page = getDefaultPage(status, info);
+    return build(status, "", page.c_str(), page.size());
 }
 
 std::string ResponseBuilder::getDate() const

@@ -2,7 +2,7 @@
 #define CONNECTION_H
 
 #include <boost/enable_shared_from_this.hpp>
-#include "common.h"
+#include "asio_common.h"
 
 class Connection : public boost::enable_shared_from_this<Connection>
 {

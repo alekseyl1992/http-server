@@ -3,9 +3,12 @@
 #include <boost/regex.hpp>
 #include <boost/bind.hpp>
 #include <string>
+#include <iostream>
 
 #include "http/request/RequestParser.h"
 #include "http/response/ResponseBuilder.h"
+#include "http/response/Response.h"
+#include "http/request/RequestParseError.h"
 
 Connection::Connection(asio::io_service &service)
     : socket(service)
@@ -36,21 +39,27 @@ void Connection::writeHandler(const boost::system::error_code &error, size_t byt
 
 void Connection::readHandler(const boost::system::error_code &error, size_t bytesTransferred)
 {
-    /*std::string dataStr(
+    auto data = readBuffer.data();
+
+    std::string dataStr(
                 asio::buffers_begin(data),
                 asio::buffers_begin(data) + bytesTransferred);
 
-    Request request = RequestParser::parse(dataStr);
+    Request request;
+    try {
+        request = RequestParser::parse(dataStr);
+    }
+    catch (const RequestParseError &e) {
+        std::cout << "RequestParseError: " << e.what() << std::endl;
+        return;
+    }
 
-    Response response = ResponseBuilder::getInstance().buildDefaultPage(200);
-    */
-    std::string message = "HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\n"
-        "<html><head><title>test</title>"
-        "</head><body><h1>Test</h1><p>This is a test!</p></body></html>";
+    const Response &response = ResponseBuilder::getInstance().buildDefaultPage(200, request.uri);
+
 
 
     asio::async_write(socket,
-                      asio::buffer(message),
+                      asio::buffer(response.getData(), response.getSize()),
                       boost::bind(&Connection::writeHandler,
                                   this,
                                   asio::placeholders::error,

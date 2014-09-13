@@ -3,11 +3,14 @@
 #include <sstream>
 #include <algorithm>
 #include <iterator>
+#include <iostream>
 
 #include "RequestParseError.h"
 
 Request RequestParser::parse(const std::string &reqString)
 {
+    std::cout << "Request: " << std::endl << reqString << std::endl;
+
     auto reqLineEndPos = reqString.find('\r');
 
     std::istringstream ss(reqString.substr(0, reqLineEndPos));

@@ -6,7 +6,7 @@
 #include "fs/FileSupplier.h"
 #include "ServicePool.h"
 #include "Connection.h"
-#include "common.h"
+#include "asio_common.h"
 
 class Server
         : public boost::noncopyable

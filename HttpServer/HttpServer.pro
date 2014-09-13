@@ -38,7 +38,8 @@ HEADERS += \
     server/http/response/ResponseBuilder.h \
     server/ServicePool.h \
     server/common.h \
-    server/Connection.h
+    server/Connection.h \
+    server/asio_common.h
 
 
 QMAKE_CXXFLAGS += -std=c++14 \
