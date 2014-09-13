@@ -4,12 +4,13 @@
 #include <functional>
 
 ServicePool::ServicePool(size_t servicesCount)
+    : servicesCount(servicesCount)
 {
 }
 
 ServicePool::~ServicePool()
 {
-
+    stopAll();
 }
 
 void ServicePool::startAll()

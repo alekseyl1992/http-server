@@ -60,7 +60,7 @@ unix {
 win32 {
     INCLUDEPATH += C:/Projects/Qt/boost_1_56_0
     LIBS += -LC:/Projects/Qt/boost_1_56_0/stage/lib/ \
-	-lws2_32
+	-lws2_32 -lMswsock
     LIBS += -LC:/Projects/Qt/boost_1_56_0/stage/lib/ \
 	    -lboost_system-mgw49-mt-1_56 \
 	    -lboost_filesystem-mgw49-mt-1_56 \

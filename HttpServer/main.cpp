@@ -28,6 +28,8 @@ int main(int argc, char* argv[])
     Server server(config);
     server.start();
 
+    std::this_thread::sleep_for(std::chrono::seconds(10));
+
     std::cout << "Stopping server..." << std::endl;;
     server.stop();
 }

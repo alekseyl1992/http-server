@@ -5,6 +5,7 @@
 #include "config/Config.h"
 #include "fs/FileSupplier.h"
 #include "ServicePool.h"
+#include "Connection.h"
 #include "common.h"
 
 class Server
@@ -18,6 +19,10 @@ public:
     void stop();
 
 private:
+    void acceptNextClient();
+    void acceptHandler(boost::shared_ptr<Connection> connection,
+                       const boost::system::error_code& error);
+
     Config config;
     FileSupplier fileSupplier;
     ServicePool servicePool;

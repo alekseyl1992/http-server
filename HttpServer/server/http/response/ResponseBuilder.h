@@ -19,7 +19,7 @@ private:
 
     ResponseBuilder *instance = nullptr;
 
-    std::string getDefaultPage(unsigned int code, std::string info) const;
+    std::string getDefaultPage(unsigned int code, std::string info="") const;
     std::string getMimeType(std::string extension) const;
 
     std::string getDate() const;

@@ -7,7 +7,7 @@
 class Connection : public boost::enable_shared_from_this<Connection>
 {
 public:
-    static std::shared_ptr<Connection> create(asio::io_service &service);
+    static boost::shared_ptr<Connection> create(asio::io_service &service);
 
     asio::ip::tcp::socket &getSocket();
 

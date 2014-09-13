@@ -19,7 +19,7 @@ public:
     asio::io_service &getService();
 
 private:
-    size_t servicesCount;
+    size_t servicesCount = 0;
     std::deque<io_service_ptr> services;
     std::deque<asio::io_service::work> serviceWorks;
 };
