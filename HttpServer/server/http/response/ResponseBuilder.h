@@ -3,6 +3,7 @@
 
 #include <string>
 #include <map>
+#include <memory>
 #include "Response.h"
 #include "../../common.h"
 
@@ -11,8 +12,8 @@ class ResponseBuilder
 public:
     static ResponseBuilder &getInstance();
 
-    Response build(ushort status, std::string bodyExtension, const char *body, size_t bodySize, size_t fileSize);
-    Response buildDefaultPage(ushort status, std::string info = "");
+    std::shared_ptr<Response> build(ushort status, std::string bodyExtension, const char *body, size_t bodySize, size_t fileSize);
+    std::shared_ptr<Response> buildDefaultPage(ushort status, std::string info = "");
 
     enum Status : ushort {
         OK = 200,

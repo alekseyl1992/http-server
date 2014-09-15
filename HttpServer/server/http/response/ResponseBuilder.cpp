@@ -73,7 +73,7 @@ std::string ResponseBuilder::getMimeType(std::string extension) const
     return mime->second;
 }
 
-Response ResponseBuilder::build(ushort status, std::string bodyExtension, const char *body, size_t bodySize, size_t fileSize)
+std::shared_ptr<Response> ResponseBuilder::build(ushort status, std::string bodyExtension, const char *body, size_t bodySize, size_t fileSize)
 {
     std::stringstream headers;
     const char *delimiter = "\r\n";
@@ -90,10 +90,10 @@ Response ResponseBuilder::build(ushort status, std::string bodyExtension, const 
 
     std::cout << "Response headers:" << std::endl << headers.str();
 
-    return Response(headers.str(), body, bodySize);
+    return std::make_shared<Response>(headers.str(), body, bodySize);
 }
 
-Response ResponseBuilder::buildDefaultPage(ushort status, std::string info)
+std::shared_ptr<Response> ResponseBuilder::buildDefaultPage(ushort status, std::string info)
 {
     std::string page = getDefaultPage(status, info);
     return build(status, "", page.c_str(), page.size(), page.size());

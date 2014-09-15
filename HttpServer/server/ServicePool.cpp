@@ -17,9 +17,10 @@ void ServicePool::startAll()
 {
     for (size_t i = 0; i < servicesCount; ++i) {
         services.push_back(io_service_ptr(new asio::io_service()));
-        serviceWorks.emplace_back(asio::io_service::work(*services.back()));
+        serviceWorks.push_back(asio::io_service::work(*services.back()));
 
-        std::thread th([service = services.back()]() {
+        std::thread th([this]() {
+            io_service_ptr service = services.back();
             service->run();
         });
 

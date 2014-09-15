@@ -38,12 +38,19 @@ void Connection::start()
 
 void Connection::writeHandler(const boost::system::error_code &error, size_t bytesTransferred)
 {
+    if (error) {
+        std::cout << "writeHandler error: " << error.message() << std::endl;
+    }
+    else {
+        socket.shutdown(asio::ip::tcp::socket::shutdown_both);
+    }
 }
 
 void Connection::readHandler(const boost::system::error_code &error, size_t bytesTransferred)
 {
     if (error && bytesTransferred == 0) {
         std::cout << "readHandler error: " << error.message() << std::endl;
+        socket.shutdown(asio::ip::tcp::socket::shutdown_both);
         return;
     }
 
@@ -60,43 +67,42 @@ void Connection::readHandler(const boost::system::error_code &error, size_t byte
     catch (const RequestParseError &e) {
         std::cout << "RequestParseError: " << e.what() << std::endl;
 
-        const Response &response = ResponseBuilder::getInstance()
+        response = ResponseBuilder::getInstance()
                 .buildDefaultPage(ResponseBuilder::BAD_REQUEST);
-        sendResponse(response);
 
-        return;
+        return sendResponse();
     }
 
     try {
         const File &file = fileSupplier.getFile(request.uri, request.method == Request::HEAD);
 
-        const Response &response = ResponseBuilder::getInstance()
+        response = ResponseBuilder::getInstance()
                 .build(ResponseBuilder::OK, file.getExtension(),
                        file.getData(), file.getSize(),
                        request.method == Request::HEAD ? 0 : file.getSize());
 
-        sendResponse(response);
+        return sendResponse();
     }
     catch (const FileNotInRootError &e) {
-        const Response &response = ResponseBuilder::getInstance()
+        response = ResponseBuilder::getInstance()
                 .buildDefaultPage(ResponseBuilder::FORBIDDEN);
-        sendResponse(response);
+
+        return sendResponse();
     }
     catch (const FileNotFoundError &e) {
-        const Response &response = ResponseBuilder::getInstance()
+        response = ResponseBuilder::getInstance()
                 .buildDefaultPage(ResponseBuilder::NOT_FOUND);
-        sendResponse(response);
-    }
 
-    socket.shutdown(asio::ip::tcp::socket::shutdown_both); //not sure, if needed
+        return sendResponse();
+    }
 }
 
-void Connection::sendResponse(const Response &response)
+void Connection::sendResponse()
 {
     asio::async_write(socket,
-                      asio::buffer(response.getData(), response.getSize()),
+                      asio::buffer(response->getData(), response->getSize()),
                       boost::bind(&Connection::writeHandler,
-                                  this,
+                                  shared_from_this(),
                                   asio::placeholders::error,
                                   asio::placeholders::bytes_transferred));
 }

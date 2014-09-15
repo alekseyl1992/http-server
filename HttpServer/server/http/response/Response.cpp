@@ -12,7 +12,10 @@ Response::Response(const std::string &headers, const char *body, size_t bodySize
 Response::~Response()
 {
     delete[] data;
+    data = nullptr;
+    size = 0;
 }
+
 
 const char *Response::getData() const
 {

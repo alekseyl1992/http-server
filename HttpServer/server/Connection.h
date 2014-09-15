@@ -20,12 +20,14 @@ public:
     void readHandler(const boost::system::error_code& error,
                      size_t bytesTransferred);
 
-    void sendResponse(const Response &response);
+    void sendResponse();
 
 private:
     Connection(asio::io_service &service, FileSupplier &fileSupplier);
 
     FileSupplier &fileSupplier;
+
+    std::shared_ptr<Response> response;
 
     asio::ip::tcp::socket socket;
     asio::streambuf readBuffer;
