@@ -25,7 +25,13 @@ Request RequestParser::parse(const std::string &reqString)
                                 + std::to_string(tokens.size()));
 
     auto methodToken = tokens[0];
-    auto reqUriToken = tokens[1];
+
+    auto reqUriToken = tokens[1];    
+    //slice all after GET parametres
+    size_t questionMarkPos = reqUriToken.find('?');
+    if (questionMarkPos != std::string::npos)
+        reqUriToken = reqUriToken.substr(0, questionMarkPos);
+
     auto httpVerisonToken = tokens[2];
 
     Request request;
