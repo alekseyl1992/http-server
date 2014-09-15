@@ -16,27 +16,30 @@ File FileSupplier::getFile(const std::string &fileName, bool justGetSize)
     //check path in root
     using namespace boost::filesystem;
 
-    path fullPath = canonical("." + fileName, root); //solve symlinks, ".." and "." things
+    boost::system::error_code e;
+    path fullPath = canonical("." + fileName, root, e); //solve symlinks, ".." and "." things
+
+    if (e)
+        throw FileNotFoundError(fullPath.string().c_str());
 
     if (boost::filesystem::is_directory(fullPath)) {
-        fullPath = canonical(index, fullPath); // "/" -> "/index.html"
+        fullPath = canonical(index, fullPath, e); // "/" -> "/index.html"
+
+        if (e)
+            throw FileNotFoundError(fullPath.string().c_str());
     }
 
     if (boost::starts_with(
                 fullPath.generic_string(),
                 root.generic_string())) {
-        if (boost::filesystem::exists(fullPath)) {
-            std::string extension = fullPath.extension().string();
+        std::string extension = fullPath.extension().string();
 
-            if (!extension.empty())
-                extension = extension.substr(1, extension.size()); //remove dot
+        if (!extension.empty())
+            extension = extension.substr(1, extension.size()); //remove dot
 
-            return File(fullPath.string(),
-                        extension,
-                        justGetSize);
-        } else {
-            throw FileNotFoundError(fullPath.string().c_str());
-        }
+        return File(fullPath.string(),
+                    extension,
+                    justGetSize);
     } else {
         throw FileNotInRootError(fullPath.string().c_str());
     }

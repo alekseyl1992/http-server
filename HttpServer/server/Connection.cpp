@@ -42,6 +42,11 @@ void Connection::writeHandler(const boost::system::error_code &error, size_t byt
 
 void Connection::readHandler(const boost::system::error_code &error, size_t bytesTransferred)
 {
+    if (error && bytesTransferred == 0) {
+        std::cout << "readHandler error: " << error.message() << std::endl;
+        return;
+    }
+
     auto data = readBuffer.data();
 
     std::string dataStr(
@@ -82,6 +87,8 @@ void Connection::readHandler(const boost::system::error_code &error, size_t byte
                 .buildDefaultPage(ResponseBuilder::NOT_FOUND);
         sendResponse(response);
     }
+
+    socket.shutdown(asio::ip::tcp::socket::shutdown_both); //not sure, if needed
 }
 
 void Connection::sendResponse(const Response &response)
