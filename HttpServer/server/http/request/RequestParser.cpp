@@ -9,7 +9,7 @@
 
 Request RequestParser::parse(const std::string &reqString)
 {
-    std::cout << "Request: " << std::endl << reqString << std::endl;
+    //std::cout << "Request: " << std::endl << reqString << std::endl;
 
     auto reqLineEndPos = reqString.find('\r');
 

@@ -42,7 +42,7 @@ void Server::acceptHandler(boost::shared_ptr<Connection> connection,
                    const boost::system::error_code& error)
 {
     if (!error) {
-        std::cout << "Client accepted!" << std::endl;
+        //std::cout << "Client accepted!" << std::endl;
 
         connection->start();
         acceptNextClient();

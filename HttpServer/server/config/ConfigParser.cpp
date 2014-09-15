@@ -24,6 +24,9 @@ Config ConfigParser::load(const std::string &configFile)
         config.ip = pt.get<std::string>("ip", config.ip);
         config.port = pt.get<unsigned short>("port", config.port);
         config.root = pt.get<std::string>("root", config.root);
+        config.index = pt.get<std::string>("index", config.index);
+        config.threadPoolSize = pt.get<size_t>("threadPoolSize", config.threadPoolSize);
+        config.cacheSize = pt.get<size_t>("cacheSize", config.cacheSize);
     } catch(const boost::property_tree::ptree_error &e) {
         throw ConfigParseError(e.what());
     }

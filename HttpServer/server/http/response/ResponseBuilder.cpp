@@ -88,7 +88,7 @@ std::shared_ptr<Response> ResponseBuilder::build(ushort status, std::string body
 
     headers << delimiter;
 
-    std::cout << "Response headers:" << std::endl << headers.str();
+    //std::cout << "Response headers:" << std::endl << headers.str();
 
     return std::make_shared<Response>(headers.str(), body, bodySize);
 }
