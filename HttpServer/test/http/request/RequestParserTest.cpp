@@ -6,6 +6,8 @@
 
 #include "server/http/request/RequestParser.h"
 #include "server/http/request/RequestParseError.h"
+#include "server/config/ConfigParser.h"
+#include "server/config/Config.h"
 
 BOOST_AUTO_TEST_SUITE(RequestParserSuite)
 

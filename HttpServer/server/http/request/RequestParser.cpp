@@ -32,6 +32,9 @@ Request RequestParser::parse(const std::string &reqString)
     if (questionMarkPos != std::string::npos)
         reqUriToken = reqUriToken.substr(0, questionMarkPos);
 
+    //replace / with index.html if needed
+
+
     auto httpVerisonToken = tokens[2];
 
     Request request;

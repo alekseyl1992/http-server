@@ -10,11 +10,13 @@
 class FileSupplier
 {
 public:
-    FileSupplier(const std::string &rootPath);
+    FileSupplier(const std::string &rootPath, const std::string &index);
+
     File getFile(const std::string &fileName, bool justGetSize);
 
 private:
     boost::filesystem::path root;
+    std::string index;
 
     //TODO: unused stuff
     std::map<std::string, File> cache;

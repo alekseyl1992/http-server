@@ -14,7 +14,8 @@ SOURCES += main.cpp \
     test/http/request/RequestParserTest.cpp \
     server/http/response/Response.cpp \
     server/ServicePool.cpp \
-    server/Connection.cpp
+    server/Connection.cpp \
+    test/fs/FileSupplierTest.cpp
 
 HEADERS += \
     Config.h \

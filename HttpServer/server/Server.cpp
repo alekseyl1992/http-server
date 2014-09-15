@@ -5,7 +5,7 @@
 
 Server::Server(const Config &config)
     : config(config)
-    , fileSupplier(config.root)
+    , fileSupplier(config.root, config.index)
     , servicePool(config.threadPoolSize)
 {
 }
