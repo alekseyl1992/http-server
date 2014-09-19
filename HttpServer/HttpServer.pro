@@ -43,20 +43,22 @@ HEADERS += \
     server/asio_common.h
 
 
-QMAKE_CXXFLAGS += -std=c++14 \
+QMAKE_CXXFLAGS += -std=c++1y \
 		    -pthread \
 		    -Wno-unused-local-typedefs \
 		    -Wno-unused-variable \
 		    -Wno-unused-parameter
 
-QMAKE_LFLAGS += -std=c++14 \
+QMAKE_LFLAGS += -std=c++1y \
 		-pthread
 
 unix {
     LIBS += -L/usr/local/lib \
             -lboost_system \
             -lboost_filesystem \
-            -lboost_test_exec_monitor
+	    -lboost_test_exec_monitor \
+	    -lboost_regex \
+	    -lboost_thread
 }
 
 win32 {

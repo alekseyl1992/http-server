@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <memory>
+#include <boost/shared_ptr.hpp>
 #include "Response.h"
 #include "../../common.h"
 
@@ -12,8 +13,8 @@ class ResponseBuilder
 public:
     static ResponseBuilder &getInstance();
 
-    std::shared_ptr<Response> build(ushort status, std::string bodyExtension, const char *body, size_t bodySize, size_t fileSize);
-    std::shared_ptr<Response> buildDefaultPage(ushort status, std::string info = "");
+    boost::shared_ptr<Response> build(ushort status, std::string bodyExtension, const char *body, size_t bodySize, size_t fileSize);
+    boost::shared_ptr<Response> buildDefaultPage(ushort status, std::string info = "");
 
     enum Status : ushort {
         OK = 200,
@@ -25,7 +26,7 @@ public:
     };
 private:
     ResponseBuilder();
-    ResponseBuilder(const &ResponseBuilder) = delete;
+    //ResponseBuilder(const &ResponseBuilder) = delete;
 
     static ResponseBuilder *instance;
 

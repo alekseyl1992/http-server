@@ -5,17 +5,18 @@
 #include "FileNotFoundError.h"
 
 FileSupplier::FileSupplier(const std::string &rootPath, const std::string &index)
-    : root(boost::filesystem::path(rootPath)), index(index)
+    : root(rootPath),
+      index(index)
 {
     using namespace boost::filesystem;
-    root = canonical(root);
+    root = canonical(absolute(rootPath));
 }
 
 File FileSupplier::getFile(const std::string &fileName, bool justGetSize)
 {
-    //check path in root
     using namespace boost::filesystem;
 
+    //check path in root
     boost::system::error_code e;
     path fullPath = canonical("." + fileName, root, e); //solve symlinks, ".." and "." things
 

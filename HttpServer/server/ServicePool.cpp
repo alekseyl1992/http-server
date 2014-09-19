@@ -2,10 +2,15 @@
 
 #include <memory>
 #include <functional>
+#include <boost/make_shared.hpp>
 
 ServicePool::ServicePool(size_t servicesCount)
     : servicesCount(servicesCount)
 {
+    for (size_t i = 0; i < servicesCount; ++i) {
+        services.push_back(io_service_ptr(new asio::io_service()));
+        serviceWorks.push_back(asio::io_service::work(*services.back()));
+    }
 }
 
 ServicePool::~ServicePool()
@@ -16,29 +21,26 @@ ServicePool::~ServicePool()
 void ServicePool::startAll()
 {
     for (size_t i = 0; i < servicesCount; ++i) {
-        services.push_back(io_service_ptr(new asio::io_service()));
-        serviceWorks.push_back(asio::io_service::work(*services.back()));
-
-        std::thread th([this]() {
-            io_service_ptr service = services.back();
-            service->run();
-        });
-
-        th.detach();
+        threads.push_back(boost::make_shared<boost::thread>(
+                              boost::bind(&boost::asio::io_service::run, services[i])));
     }
+
+    for (auto thread: threads)
+        thread->join();
 }
 
 void ServicePool::stopAll()
 {
     serviceWorks.clear();
+
+    for (auto service: services)
+        service->stop();
 }
 
 asio::io_service &ServicePool::getService()
 {
-    io_service_ptr service = services.front();
+    if (currentService >= servicesCount)
+        currentService = 0;
 
-    services.push_back(services.front());
-    services.pop_front();
-
-    return *service;
+    return *services[currentService++];
 }

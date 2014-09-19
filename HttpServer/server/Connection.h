@@ -27,7 +27,7 @@ private:
 
     FileSupplier &fileSupplier;
 
-    std::shared_ptr<Response> response;
+    boost::shared_ptr<Response> response;
 
     asio::ip::tcp::socket socket;
     asio::streambuf readBuffer;

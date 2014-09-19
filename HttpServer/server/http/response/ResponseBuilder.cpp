@@ -3,6 +3,7 @@
 #include <sstream>
 #include <ctime>
 #include <iostream>
+#include <boost/make_shared.hpp>
 #include "../../common.h"
 
 ResponseBuilder *ResponseBuilder::instance = nullptr;
@@ -30,20 +31,20 @@ ResponseBuilder::ResponseBuilder()
     extToMime["swf"] = "application/x-shockwave-flash";
 
     //error pages setup
-    defaultPages.insert({OK, "OK, but no body in response"});
-    defaultPages.insert({BAD_REQUEST, "Bad request. Very bad request!"});
-    defaultPages.insert({FORBIDDEN, "Go away!"});
-    defaultPages.insert({NOT_FOUND, "Such page. So not found. Wow!"});
-    defaultPages.insert({METHOD_NOT_ALLOWED, "Method not allowed"});
-    defaultPages.insert({INTERNAL_SERVER_ERROR, "Internal Server Error"});
+    defaultPages[OK] = "OK but no body in response";
+    defaultPages[BAD_REQUEST] = "Bad request. Very bad request!";
+    defaultPages[FORBIDDEN] = "Go away!";
+    defaultPages[NOT_FOUND] = "Such page. So not found. Wow!";
+    defaultPages[METHOD_NOT_ALLOWED] = "Method not allowed";
+    defaultPages[INTERNAL_SERVER_ERROR] = "Internal Server Error";
 
     //status names setup
-    statusNames.insert({OK, "OK"});
-    statusNames.insert({BAD_REQUEST, "Bad request"});
-    statusNames.insert({FORBIDDEN, "Go away!"});
-    statusNames.insert({NOT_FOUND, "Such page. So not found. Wow!"});
-    statusNames.insert({METHOD_NOT_ALLOWED, "Method not allowed"});
-    statusNames.insert({INTERNAL_SERVER_ERROR, "Internal Server Error"});
+    statusNames[OK] = "OK";
+    statusNames[BAD_REQUEST] = "Bad request";
+    statusNames[FORBIDDEN] = "Go away!";
+    statusNames[NOT_FOUND] = "Such page. So not found. Wow!";
+    statusNames[METHOD_NOT_ALLOWED] = "Method not allowed";
+    statusNames[INTERNAL_SERVER_ERROR] = "Internal Server Error";
 }
 
 std::string ResponseBuilder::getDefaultPage(ushort status, std::string info) const
@@ -73,7 +74,7 @@ std::string ResponseBuilder::getMimeType(std::string extension) const
     return mime->second;
 }
 
-std::shared_ptr<Response> ResponseBuilder::build(ushort status, std::string bodyExtension, const char *body, size_t bodySize, size_t fileSize)
+boost::shared_ptr<Response> ResponseBuilder::build(ushort status, std::string bodyExtension, const char *body, size_t bodySize, size_t fileSize)
 {
     std::stringstream headers;
     const char *delimiter = "\r\n";
@@ -90,10 +91,10 @@ std::shared_ptr<Response> ResponseBuilder::build(ushort status, std::string body
 
     //std::cout << "Response headers:" << std::endl << headers.str();
 
-    return std::make_shared<Response>(headers.str(), body, bodySize);
+    return boost::make_shared<Response>(headers.str(), body, bodySize);
 }
 
-std::shared_ptr<Response> ResponseBuilder::buildDefaultPage(ushort status, std::string info)
+boost::shared_ptr<Response> ResponseBuilder::buildDefaultPage(ushort status, std::string info)
 {
     std::string page = getDefaultPage(status, info);
     return build(status, "", page.c_str(), page.size(), page.size());

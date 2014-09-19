@@ -28,10 +28,10 @@ int main(int argc, char* argv[])
     Server server(config);
     server.start();
 
-    std::cout << "Press any enter to stop..." << std::endl;
-    std::cin.get();
+//    std::cout << "Press any enter to stop..." << std::endl;
+//    std::cin.get();
 
-    std::cout << "Stopping server..." << std::endl;;
-    server.stop();
+//    std::cout << "Stopping server..." << std::endl;;
+//    server.stop();
 }
 #endif

@@ -2,6 +2,7 @@
 #define SERVER_H
 
 #include <boost/noncopyable.hpp>
+#include <vector>
 #include "config/Config.h"
 #include "fs/FileSupplier.h"
 #include "ServicePool.h"
@@ -22,12 +23,14 @@ private:
     void acceptNextClient();
     void acceptHandler(boost::shared_ptr<Connection> connection,
                        const boost::system::error_code& error);
+    void init_signal_handlers();
 
     Config config;
     FileSupplier fileSupplier;
     ServicePool servicePool;
 
-    std::shared_ptr<asio::ip::tcp::acceptor> acceptor;
+    boost::shared_ptr<asio::ip::tcp::acceptor> acceptor;
+    boost::shared_ptr<boost::asio::signal_set> _signals;
 };
 
 #endif // SERVER_H

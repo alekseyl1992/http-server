@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <boost/bind.hpp>
+#include <boost/make_shared.hpp>
 
 Server::Server(const Config &config)
     : config(config)
@@ -12,18 +13,24 @@ Server::Server(const Config &config)
 
 Server::~Server()
 {
-    servicePool.stopAll();
+    stop();
 }
 
 void Server::start()
 {
-    servicePool.startAll();
-
-    acceptor = std::make_shared<asio::ip::tcp::acceptor>(
+    acceptor = boost::make_shared<asio::ip::tcp::acceptor>(
                 servicePool.getService(),
                 asio::ip::tcp::endpoint(
                     asio::ip::tcp::v4(),
                     config.port));
+
+    _signals = boost::make_shared<boost::asio::signal_set>(servicePool.getService());
+    _signals->add(SIGINT);
+    _signals->add(SIGTERM);
+#ifdef SIGQUIT
+    _signals->add(SIGQUIT);
+#endif
+    init_signal_handlers();
 
     acceptNextClient();
 
@@ -31,11 +38,22 @@ void Server::start()
               << std::endl
               << config.toString()
               << std::endl;
+
+    servicePool.startAll();
+}
+
+void Server::init_signal_handlers()
+{
+    _signals->async_wait(
+    [this](boost::system::error_code /*ec*/, int /*signo*/) {
+        stop();
+    });
 }
 
 void Server::stop()
 {
     std::cout << "Server stopped" << std::endl;
+    servicePool.stopAll();
 }
 
 void Server::acceptHandler(boost::shared_ptr<Connection> connection,
@@ -51,6 +69,7 @@ void Server::acceptHandler(boost::shared_ptr<Connection> connection,
 
 void Server::acceptNextClient() {
     auto connection = Connection::create(servicePool.getService(), fileSupplier);
+
     acceptor->async_accept(connection->getSocket(),
                           boost::bind(&Server::acceptHandler,
                                       this,

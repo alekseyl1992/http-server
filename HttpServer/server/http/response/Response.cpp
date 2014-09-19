@@ -1,4 +1,5 @@
 #include "Response.h"
+#include <memory.h>
 
 Response::Response(const std::string &headers, const char *body, size_t bodySize)
 {
