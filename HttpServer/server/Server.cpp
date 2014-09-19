@@ -24,9 +24,9 @@ void Server::start()
                     asio::ip::tcp::v4(),
                     config.port));
 
-    _signals = boost::make_shared<boost::asio::signal_set>(servicePool.getService());
-    _signals->add(SIGINT);
-    _signals->add(SIGTERM);
+    signals = boost::make_shared<boost::asio::signal_set>(servicePool.getService());
+    signals->add(SIGINT);
+    signals->add(SIGTERM);
 #ifdef SIGQUIT
     _signals->add(SIGQUIT);
 #endif
@@ -44,7 +44,7 @@ void Server::start()
 
 void Server::init_signal_handlers()
 {
-    _signals->async_wait(
+    signals->async_wait(
     [this](boost::system::error_code /*ec*/, int /*signo*/) {
         stop();
     });
@@ -68,7 +68,10 @@ void Server::acceptHandler(boost::shared_ptr<Connection> connection,
 }
 
 void Server::acceptNextClient() {
-    auto connection = Connection::create(servicePool.getService(), fileSupplier);
+    auto connection = boost::make_shared<Connection>(
+                servicePool.getService(),
+                fileSupplier,
+                responseBuilder);
 
     acceptor->async_accept(connection->getSocket(),
                           boost::bind(&Server::acceptHandler,

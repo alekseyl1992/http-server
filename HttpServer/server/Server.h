@@ -27,10 +27,11 @@ private:
 
     Config config;
     FileSupplier fileSupplier;
+    ResponseBuilder responseBuilder;
     ServicePool servicePool;
 
     boost::shared_ptr<asio::ip::tcp::acceptor> acceptor;
-    boost::shared_ptr<boost::asio::signal_set> _signals;
+    boost::shared_ptr<boost::asio::signal_set> signals;
 };
 
 #endif // SERVER_H

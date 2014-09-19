@@ -6,17 +6,6 @@
 #include <boost/make_shared.hpp>
 #include "../../common.h"
 
-ResponseBuilder *ResponseBuilder::instance = nullptr;
-
-ResponseBuilder &ResponseBuilder::getInstance()
-{
-    if (instance == nullptr)
-        instance = new ResponseBuilder();
-
-    return *instance;
-}
-
-
 ResponseBuilder::ResponseBuilder()
 {
     //MIME setup

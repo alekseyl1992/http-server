@@ -5,13 +5,15 @@
 #include <map>
 #include <memory>
 #include <boost/shared_ptr.hpp>
+#include <boost/noncopyable.hpp>
 #include "Response.h"
 #include "../../common.h"
 
 class ResponseBuilder
+        : public boost::noncopyable
 {
 public:
-    static ResponseBuilder &getInstance();
+    ResponseBuilder();
 
     boost::shared_ptr<Response> build(ushort status, std::string bodyExtension, const char *body, size_t bodySize, size_t fileSize);
     boost::shared_ptr<Response> buildDefaultPage(ushort status, std::string info = "");
@@ -25,11 +27,6 @@ public:
         INTERNAL_SERVER_ERROR = 500
     };
 private:
-    ResponseBuilder();
-    //ResponseBuilder(const &ResponseBuilder) = delete;
-
-    static ResponseBuilder *instance;
-
     std::string getDefaultPage(ushort, std::string info="") const;
     std::string getMimeType(std::string extension) const;
 

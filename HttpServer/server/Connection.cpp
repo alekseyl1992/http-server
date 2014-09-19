@@ -13,19 +13,14 @@
 #include "fs/FileNotFoundError.h"
 #include "fs/FileNotInRootError.h"
 
-Connection::Connection(asio::io_service &service, FileSupplier &fileSupplier)
-    : fileSupplier(fileSupplier), socket(service)
+Connection::Connection(asio::io_service &service, FileSupplier &fileSupplier, ResponseBuilder &responseBuilder)
+    : fileSupplier(fileSupplier), responseBuilder(responseBuilder), socket(service)
 {
 }
 
 asio::ip::tcp::socket &Connection::getSocket()
 {
     return socket;
-}
-
-boost::shared_ptr<Connection> Connection::create(asio::io_service &service, FileSupplier &fileSupplier)
-{
-    return boost::shared_ptr<Connection>(new Connection(service, fileSupplier));
 }
 
 void Connection::start()
@@ -67,8 +62,7 @@ void Connection::readHandler(const boost::system::error_code &error, size_t byte
     catch (const RequestParseError &e) {
         std::cout << "RequestParseError: " << e.what() << std::endl;
 
-        response = ResponseBuilder::getInstance()
-                .buildDefaultPage(ResponseBuilder::BAD_REQUEST);
+        response = responseBuilder.buildDefaultPage(ResponseBuilder::BAD_REQUEST);
 
         return sendResponse();
     }
@@ -76,22 +70,21 @@ void Connection::readHandler(const boost::system::error_code &error, size_t byte
     try {
         const File &file = fileSupplier.getFile(request.uri, request.method == Request::HEAD);
 
-        response = ResponseBuilder::getInstance()
-                .build(ResponseBuilder::OK, file.getExtension(),
-                       file.getData(), file.getSize(),
-                       request.method == Request::HEAD ? 0 : file.getSize());
+        //everything is fine, try to contruct result page
+        response = responseBuilder.build(
+                    ResponseBuilder::OK, file.getExtension(),
+                    file.getData(), file.getSize(),
+                    request.method == Request::HEAD ? 0 : file.getSize());
 
         return sendResponse();
     }
     catch (const FileNotInRootError &e) {
-        response = ResponseBuilder::getInstance()
-                .buildDefaultPage(ResponseBuilder::FORBIDDEN);
+        response = responseBuilder.buildDefaultPage(ResponseBuilder::FORBIDDEN);
 
         return sendResponse();
     }
     catch (const FileNotFoundError &e) {
-        response = ResponseBuilder::getInstance()
-                .buildDefaultPage(ResponseBuilder::NOT_FOUND);
+        response = responseBuilder.buildDefaultPage(ResponseBuilder::NOT_FOUND);
 
         return sendResponse();
     }

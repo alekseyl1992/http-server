@@ -3,13 +3,14 @@
 
 #include <boost/enable_shared_from_this.hpp>
 #include "asio_common.h"
+#include "http/response/ResponseBuilder.h"
 #include "http/response/Response.h"
 #include "fs/FileSupplier.h"
 
 class Connection : public boost::enable_shared_from_this<Connection>
 {
 public:
-    static boost::shared_ptr<Connection> create(asio::io_service &service, FileSupplier &fileSupplier);
+    Connection(asio::io_service &service, FileSupplier &fileSupplier, ResponseBuilder &responseBuilder);
 
     asio::ip::tcp::socket &getSocket();
 
@@ -23,9 +24,8 @@ public:
     void sendResponse();
 
 private:
-    Connection(asio::io_service &service, FileSupplier &fileSupplier);
-
     FileSupplier &fileSupplier;
+    ResponseBuilder &responseBuilder;
 
     boost::shared_ptr<Response> response;
 
