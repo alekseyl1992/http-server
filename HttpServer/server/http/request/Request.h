@@ -7,7 +7,7 @@ struct Request
 {
     enum Method {GET, HEAD, OTHER};
 
-    Method method;
+    Method method = OTHER;
     std::string uri;
 };
 

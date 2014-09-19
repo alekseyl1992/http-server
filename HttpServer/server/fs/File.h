@@ -7,6 +7,7 @@ class File
 {
 public:
     explicit File(const std::string &path, const std::string &extension, bool justGetSize);
+    ~File();
 
     char *getData() const;
     unsigned long getSize() const;

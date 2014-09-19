@@ -11,6 +11,13 @@ File::File(const std::string &path, const std::string &extension, bool justGetSi
     open(path, justGetSize);
 }
 
+File::~File()
+{
+    delete[] data;
+    data = nullptr;
+    size = 0;
+}
+
 void File::open(const std::string &path, bool justGetSize)
 {
     std::ifstream fs(path, std::ios::in | std::ios::binary | std::ios::ate);

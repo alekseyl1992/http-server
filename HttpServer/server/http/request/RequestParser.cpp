@@ -24,9 +24,9 @@ Request RequestParser::parse(const std::string &reqString)
         throw RequestParseError("Wrong token count on request line: "
                                 + std::to_string(tokens.size()));
 
-    auto methodToken = tokens[0];
+    auto &methodToken = tokens[0];
 
-    auto reqUriToken = tokens[1];    
+    auto &reqUriToken = tokens[1];
     //slice all after GET parametres
     size_t questionMarkPos = reqUriToken.find('?');
     if (questionMarkPos != std::string::npos)
@@ -35,7 +35,7 @@ Request RequestParser::parse(const std::string &reqString)
     //replace / with index.html if needed
 
 
-    auto httpVerisonToken = tokens[2];
+    auto &httpVerisonToken = tokens[2];
 
     Request request;
 
