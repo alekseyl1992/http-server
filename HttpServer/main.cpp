@@ -13,11 +13,16 @@ int main(int argc, char* argv[])
 
     Config config;
     try {
-        config = ConfigParser::load();
-    } catch (const ConfigOpenError &e) {
+        if (argc > 1)
+            config = ConfigParser::load(argv[1]);
+        else
+            config = ConfigParser::load();
+    }
+    catch (const ConfigOpenError &e) {
         std::cerr << "Unable to open config file. Falling back to default config.";
         std::cerr << std::endl;
-    } catch (const ConfigParseError &e) {
+    }
+    catch (const ConfigParseError &e) {
         std::cerr << "Unable to parse config file. Exiting now.";
         std::cerr << std::endl;
         return -1;
@@ -28,10 +33,6 @@ int main(int argc, char* argv[])
     Server server(config);
     server.start();
 
-//    std::cout << "Press any enter to stop..." << std::endl;
-//    std::cin.get();
-
-//    std::cout << "Stopping server..." << std::endl;;
-//    server.stop();
+    std::cout << "Server stopped!" << std::endl;
 }
 #endif

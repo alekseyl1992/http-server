@@ -23,7 +23,7 @@ private:
     void acceptNextClient();
     void acceptHandler(boost::shared_ptr<Connection> connection,
                        const boost::system::error_code& error);
-    void init_signal_handlers();
+    void initSignals();
 
     Config config;
     FileSupplier fileSupplier;

@@ -24,13 +24,7 @@ void Server::start()
                     asio::ip::tcp::v4(),
                     config.port));
 
-    signals = boost::make_shared<boost::asio::signal_set>(servicePool.getService());
-    signals->add(SIGINT);
-    signals->add(SIGTERM);
-#ifdef SIGQUIT
-    _signals->add(SIGQUIT);
-#endif
-    init_signal_handlers();
+    initSignals();
 
     acceptNextClient();
 
@@ -42,17 +36,24 @@ void Server::start()
     servicePool.startAll();
 }
 
-void Server::init_signal_handlers()
+void Server::initSignals()
 {
+    signals = boost::make_shared<boost::asio::signal_set>(servicePool.getService());
+    signals->add(SIGINT);
+    signals->add(SIGTERM);
+#ifdef SIGQUIT
+    _signals->add(SIGQUIT);
+#endif
+
     signals->async_wait(
-    [this](boost::system::error_code /*ec*/, int /*signo*/) {
+    [this](boost::system::error_code ec, int signo) {
         stop();
     });
 }
 
 void Server::stop()
 {
-    std::cout << "Server stopped" << std::endl;
+    std::cout << "Stopping server..." << std::endl;
     servicePool.stopAll();
 }
 
