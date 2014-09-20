@@ -26,7 +26,8 @@ void ServicePool::startAll()
     }
 
     for (auto thread: threads)
-        thread->join();
+        if (thread->joinable())
+            thread->join();
 }
 
 void ServicePool::stopAll()

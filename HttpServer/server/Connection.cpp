@@ -68,13 +68,13 @@ void Connection::readHandler(const boost::system::error_code &error, size_t byte
     }
 
     try {
-        const File &file = fileSupplier.getFile(request.uri, request.method == Request::HEAD);
+        auto file = fileSupplier.getFile(request.uri, request.method == Request::HEAD);
 
         //everything is fine, try to contruct result page
         response = responseBuilder.build(
-                    ResponseBuilder::OK, file.getExtension(),
-                    file.getData(), file.getSize(),
-                    request.method == Request::HEAD ? 0 : file.getSize());
+                    ResponseBuilder::OK, file->getExtension(),
+                    file->getData(), file->getSize(),
+                    request.method == Request::HEAD ? 0 : file->getSize());
 
         return sendResponse();
     }

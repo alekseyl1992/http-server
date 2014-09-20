@@ -1,5 +1,6 @@
 #include "FileSupplier.h"
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/make_shared.hpp>
 
 #include "FileNotInRootError.h"
 #include "FileNotFoundError.h"
@@ -12,8 +13,12 @@ FileSupplier::FileSupplier(const std::string &rootPath, const std::string &index
     root = canonical(absolute(rootPath));
 }
 
-File FileSupplier::getFile(const std::string &fileName, bool justGetSize)
+FileSupplier::file_ptr FileSupplier::getFile(const std::string &fileName, bool justGetSize)
 {
+    auto cachedFile = cache.find(fileName);
+    if (cachedFile != cache.end())
+        return cachedFile->second;
+
     using namespace boost::filesystem;
 
     //check path in root
@@ -38,9 +43,11 @@ File FileSupplier::getFile(const std::string &fileName, bool justGetSize)
         if (!extension.empty())
             extension = extension.substr(1, extension.size()); //remove dot
 
-        return File(fullPath.string(),
-                    extension,
-                    justGetSize);
+
+        auto file = boost::make_shared<File>(fullPath.string(), extension, justGetSize);
+        cache[fileName] = file;
+
+        return file;
     } else {
         throw FileNotInRootError(fullPath.string().c_str());
     }

@@ -7,6 +7,7 @@
 
 #include "RequestParseError.h"
 
+//optimisation not needed, tested with stub
 Request RequestParser::parse(const std::string &reqString)
 {
     //std::cout << "Request: " << std::endl << reqString << std::endl;

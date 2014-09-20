@@ -42,13 +42,13 @@ void Server::initSignals()
     signals->add(SIGINT);
     signals->add(SIGTERM);
 #ifdef SIGQUIT
-    _signals->add(SIGQUIT);
+    signals->add(SIGQUIT);
 #endif
 
     signals->async_wait(
-    [this](boost::system::error_code ec, int signo) {
-        stop();
-    });
+                [this](boost::system::error_code ec, int signo) {
+                stop();
+            });
 }
 
 void Server::stop()
