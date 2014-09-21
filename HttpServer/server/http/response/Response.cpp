@@ -3,11 +3,16 @@
 
 Response::Response(const std::string &headers, const char *body, size_t bodySize)
 {
+    if (!body)
+        bodySize = 0;
+
     size = headers.size() + bodySize;
     data = new char[size];
 
     ::memcpy(data, headers.c_str(), headers.size());
-    ::memcpy(data + headers.size(), body, bodySize);
+
+    if (body)
+        ::memcpy(data + headers.size(), body, bodySize);
 }
 
 Response::~Response()

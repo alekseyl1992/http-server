@@ -15,7 +15,7 @@ class ResponseBuilder
 public:
     ResponseBuilder();
 
-    boost::shared_ptr<Response> build(ushort status, std::string bodyExtension, const char *body, size_t bodySize, size_t fileSize);
+    boost::shared_ptr<Response> build(ushort status, std::string bodyExtension, const char *body, size_t bodySize);
     boost::shared_ptr<Response> buildDefaultPage(ushort status, std::string info = "");
 
     enum Status : ushort {

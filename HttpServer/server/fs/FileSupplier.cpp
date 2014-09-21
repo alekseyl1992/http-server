@@ -32,7 +32,7 @@ FileSupplier::file_ptr FileSupplier::getFile(const std::string &fileName, bool j
         fullPath = canonical(index, fullPath, e); // "/" -> "/index.html"
 
         if (e)
-            throw FileNotFoundError(fullPath.string().c_str());
+            throw FileNotInRootError(fullPath.string().c_str());
     }
 
     if (boost::starts_with(

@@ -67,14 +67,23 @@ void Connection::readHandler(const boost::system::error_code &error, size_t byte
         return sendResponse();
     }
 
+    if (request.method == Request::OTHER) {
+        response = responseBuilder.buildDefaultPage(ResponseBuilder::METHOD_NOT_ALLOWED);
+
+        return sendResponse();
+    }
+
     try {
-        auto file = fileSupplier.getFile(request.uri, request.method == Request::HEAD);
+        bool justSize = request.method == Request::HEAD;
+
+        auto file = fileSupplier.getFile(request.uri, justSize);
 
         //everything is fine, try to contruct result page
         response = responseBuilder.build(
-                    ResponseBuilder::OK, file->getExtension(),
-                    file->getData(), file->getSize(),
-                    request.method == Request::HEAD ? 0 : file->getSize());
+                    ResponseBuilder::OK,
+                    file->getExtension(),
+                    justSize ? nullptr : file->getData(),
+                    file->getSize());
 
         return sendResponse();
     }

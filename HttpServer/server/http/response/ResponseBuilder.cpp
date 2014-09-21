@@ -63,7 +63,7 @@ std::string ResponseBuilder::getMimeType(std::string extension) const
     return mime->second;
 }
 
-boost::shared_ptr<Response> ResponseBuilder::build(ushort status, std::string bodyExtension, const char *body, size_t bodySize, size_t fileSize)
+boost::shared_ptr<Response> ResponseBuilder::build(ushort status, std::string bodyExtension, const char *body, size_t bodySize)
 {
     std::stringstream headers;
     const char *delimiter = "\r\n";
@@ -72,7 +72,7 @@ boost::shared_ptr<Response> ResponseBuilder::build(ushort status, std::string bo
 
     headers << "Date: "              << getDate()           << delimiter;
     headers << "Server: "            << "HttpServer/1.1"    << delimiter;
-    headers << "Content-Length: "    << fileSize            << delimiter;
+    headers << "Content-Length: "    << bodySize            << delimiter;
     headers << "Content-Type: "      << getMimeType(bodyExtension) << delimiter;
     headers << "Connection: "        << "close"             << delimiter;
 
@@ -86,7 +86,7 @@ boost::shared_ptr<Response> ResponseBuilder::build(ushort status, std::string bo
 boost::shared_ptr<Response> ResponseBuilder::buildDefaultPage(ushort status, std::string info)
 {
     std::string page = getDefaultPage(status, info);
-    return build(status, "", page.c_str(), page.size(), page.size());
+    return build(status, "", page.c_str(), page.size());
 }
 
 std::string ResponseBuilder::getDate() const
