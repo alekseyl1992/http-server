@@ -26,7 +26,7 @@ FileSupplier::file_ptr FileSupplier::getFile(const std::string &fileName, bool j
         boost::posix_time::ptime currentTime =
                 boost::posix_time::second_clock::local_time();
 
-        if (filePtr->getTimeToClose() < currentTime)
+        if (filePtr->getTimeToClose() > currentTime)
             return filePtr;
     }
 
