@@ -5,6 +5,7 @@
 #include <string>
 #include <boost/filesystem.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/thread/mutex.hpp>
 
 #include "File.h"
 
@@ -20,6 +21,8 @@ public:
 private:
     boost::filesystem::path root;
     std::string index;
+
+    boost::mutex m;
 
     //TODO: unused stuff
     std::map<std::string, file_ptr> cache;

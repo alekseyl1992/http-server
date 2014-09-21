@@ -1,6 +1,7 @@
 #include "FileSupplier.h"
-#include <boost/algorithm/string/predicate.hpp>
 #include <boost/make_shared.hpp>
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/thread/lock_guard.hpp>
 
 #include "FileNotInRootError.h"
 #include "FileNotFoundError.h"
@@ -15,6 +16,8 @@ FileSupplier::FileSupplier(const std::string &rootPath, const std::string &index
 
 FileSupplier::file_ptr FileSupplier::getFile(const std::string &fileName, bool justGetSize)
 {
+    boost::lock_guard<boost::mutex> lock(m);
+
     auto cachedFile = cache.find(fileName);
     if (cachedFile != cache.end())
         return cachedFile->second;
