@@ -27,6 +27,7 @@ Config ConfigParser::load(const std::string &configFile)
         config.index = pt.get<std::string>("index", config.index);
         config.threadPoolSize = pt.get<size_t>("threadPoolSize", config.threadPoolSize);
         config.cacheSize = pt.get<size_t>("cacheSize", config.cacheSize);
+        config.cachedLifeTime = pt.get<size_t>("cachedLifeTime", config.cachedLifeTime);
     } catch(const boost::property_tree::ptree_error &e) {
         throw ConfigParseError(e.what());
     }

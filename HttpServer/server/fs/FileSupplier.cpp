@@ -6,9 +6,10 @@
 #include "FileNotInRootError.h"
 #include "FileNotFoundError.h"
 
-FileSupplier::FileSupplier(const std::string &rootPath, const std::string &index)
+FileSupplier::FileSupplier(const std::string &rootPath, const std::string &index, size_t cachedLifeTime)
     : root(rootPath),
-      index(index)
+      index(index),
+      cachedLifeTime(cachedLifeTime)
 {
     using namespace boost::filesystem;
     root = canonical(absolute(rootPath));
@@ -19,8 +20,15 @@ FileSupplier::file_ptr FileSupplier::getFile(const std::string &fileName, bool j
     boost::lock_guard<boost::mutex> lock(m);
 
     auto cachedFile = cache.find(fileName);
-    if (cachedFile != cache.end())
-        return cachedFile->second;
+    if (cachedFile != cache.end()) {
+        auto filePtr = cachedFile->second;
+
+        boost::posix_time::ptime currentTime =
+                boost::posix_time::second_clock::local_time();
+
+        if (filePtr->getTimeToClose() < currentTime)
+            return filePtr;
+    }
 
     using namespace boost::filesystem;
 
@@ -47,7 +55,13 @@ FileSupplier::file_ptr FileSupplier::getFile(const std::string &fileName, bool j
             extension = extension.substr(1, extension.size()); //remove dot
 
 
-        auto file = boost::make_shared<File>(fullPath.string(), extension, justGetSize);
+        boost::posix_time::ptime timeToClose =
+                boost::posix_time::second_clock::local_time()
+                + boost::posix_time::seconds(cachedLifeTime);
+
+        auto file = boost::make_shared<File>(fullPath.string(), extension,
+                                             timeToClose, justGetSize);
+
         cache[fileName] = file;
 
         return file;

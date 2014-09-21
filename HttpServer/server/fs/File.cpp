@@ -5,8 +5,8 @@
 
 #include "FileNotFoundError.h"
 
-File::File(const std::string &path, const std::string &extension, bool justGetSize)
-    : extension(extension)
+File::File(const std::string &path, const std::string &extension, const boost::posix_time::ptime &getTimeToClose, bool justGetSize)
+    : extension(extension), timeToClose(getTimeToClose)
 {
     open(path, justGetSize);
 }
@@ -52,6 +52,11 @@ unsigned long File::getSize() const
 std::string File::getExtension() const
 {
     return extension;
+}
+
+const boost::posix_time::ptime &File::getTimeToClose() const
+{
+    return timeToClose;
 }
 
 

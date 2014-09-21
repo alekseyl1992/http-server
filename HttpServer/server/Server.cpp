@@ -6,7 +6,7 @@
 
 Server::Server(const Config &config)
     : config(config)
-    , fileSupplier(config.root, config.index)
+    , fileSupplier(config.root, config.index, config.cachedLifeTime)
     , servicePool(config.threadPoolSize)
 {
 }
