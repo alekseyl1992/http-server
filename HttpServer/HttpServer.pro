@@ -13,10 +13,10 @@ SOURCES += main.cpp \
     TestRunner.cpp \
     test/http/request/RequestParserTest.cpp \
     server/http/response/Response.cpp \
-    server/ServicePool.cpp \
     server/Connection.cpp \
     test/fs/FileSupplierTest.cpp \
-    server/Logger.cpp
+    server/Logger.cpp \
+    server/ThreadPool.cpp
 
 HEADERS += \
     Config.h \
@@ -38,11 +38,11 @@ HEADERS += \
     server/http/request/RequestParseError.h \
     server/http/response/Response.h \
     server/http/response/ResponseBuilder.h \
-    server/ServicePool.h \
     server/common.h \
     server/Connection.h \
     server/asio_common.h \
-    server/Logger.h
+    server/Logger.h \
+    server/ThreadPool.h
 
 
 QMAKE_CXXFLAGS += -std=c++1y \

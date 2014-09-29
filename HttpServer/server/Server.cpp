@@ -7,7 +7,8 @@
 Server::Server(const Config &config)
     : config(config)
     , fileSupplier(config.root, config.index, config.cachedLifeTime)
-    , servicePool(config.threadPoolSize)
+    , executorsPool(config.acceptorsPoolSize)
+    , acceptorsPool(config.acceptorsPoolSize)
 {
 }
 
@@ -19,26 +20,31 @@ Server::~Server()
 void Server::start()
 {
     acceptor = boost::make_shared<asio::ip::tcp::acceptor>(
-                servicePool.getService(),
+                acceptorsPool.getService(),
                 asio::ip::tcp::endpoint(
                     asio::ip::tcp::v4(),
                     config.port));
 
-    initSignals();
-
-    acceptNextClient();
+    //initSignals();
 
     std::cout << "Server started with configuration:"
               << std::endl
               << config.toString()
               << std::endl;
 
-    servicePool.startAll();
+    acceptorsPool.startAll();
+    executorsPool.startAll();
+
+    for (int i = 0; i < config.acceptorsPoolSize; ++i)
+        acceptNextClient();
+
+    acceptorsPool.join();
+    executorsPool.join();
 }
 
-void Server::initSignals()
+/*void Server::initSignals()
 {
-    signals = boost::make_shared<boost::asio::signal_set>(servicePool.getService());
+    signals = boost::make_shared<boost::asio::signal_set>(executorsPool.getService());
     signals->add(SIGINT);
     signals->add(SIGTERM);
 #ifdef SIGQUIT
@@ -49,12 +55,14 @@ void Server::initSignals()
                 [this](boost::system::error_code ec, int signo) {
                 stop();
             });
-}
+}*/
 
 void Server::stop()
 {
     std::cout << "Stopping server..." << std::endl;
-    servicePool.stopAll();
+
+    acceptorsPool.stopAll();
+    executorsPool.stopAll();
 }
 
 void Server::acceptHandler(boost::shared_ptr<Connection> connection,
@@ -70,7 +78,7 @@ void Server::acceptHandler(boost::shared_ptr<Connection> connection,
 
 void Server::acceptNextClient() {
     auto connection = boost::make_shared<Connection>(
-                servicePool.getService(),
+                executorsPool.getService(),
                 fileSupplier,
                 responseBuilder);
 

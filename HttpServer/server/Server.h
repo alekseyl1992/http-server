@@ -5,7 +5,7 @@
 #include <vector>
 #include "config/Config.h"
 #include "fs/FileSupplier.h"
-#include "ServicePool.h"
+#include "ThreadPool.h"
 #include "Connection.h"
 #include "asio_common.h"
 
@@ -28,10 +28,11 @@ private:
     Config config;
     FileSupplier fileSupplier;
     ResponseBuilder responseBuilder;
-    ServicePool servicePool;
+    ThreadPool executorsPool;
+    ThreadPool acceptorsPool;
 
     boost::shared_ptr<asio::ip::tcp::acceptor> acceptor;
-    boost::shared_ptr<boost::asio::signal_set> signals;
+    //boost::shared_ptr<boost::asio::signal_set> signals;
 };
 
 #endif // SERVER_H

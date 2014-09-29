@@ -12,7 +12,8 @@ struct Config
     std::string root = "./";
     std::string index = "index.html";
 
-    size_t threadPoolSize = 8;
+    size_t acceptorsPoolSize = 2;
+    size_t executorsPoolSize = 2;
     size_t cacheSize = 1024*1024*1024;
 
     size_t cachedLifeTime = 60 * 10; // 10 minutes
@@ -24,7 +25,8 @@ struct Config
            << "port: "  << port << std::endl
            << "root: "  << root << std::endl
            << "index: " << index << std::endl
-           << "threadPoolSize: " << threadPoolSize << std::endl
+           << "acceptorsPoolSize: " << acceptorsPoolSize << std::endl
+           << "executorsPoolSize: " << executorsPoolSize << std::endl
            << "cacheSize: " << cacheSize << std::endl
            << "cachedLifeTime: " << cachedLifeTime << std::endl;
 

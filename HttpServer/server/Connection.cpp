@@ -25,10 +25,15 @@ asio::ip::tcp::socket &Connection::getSocket()
 
 void Connection::start()
 {
-    asio::async_read_until(socket, readBuffer, boost::regex("\r\n\r\n"),
-        boost::bind(&Connection::readHandler, shared_from_this(),
-                    asio::placeholders::error,
-                    asio::placeholders::bytes_transferred));
+    boost::system::error_code error;
+
+    size_t bytesTransferred =
+            asio::read_until(socket,
+                             readBuffer,
+                             boost::regex("\r\n\r\n"),
+                             error);
+
+    readHandler(error, bytesTransferred);
 }
 
 void Connection::writeHandler(const boost::system::error_code &error, size_t bytesTransferred)
@@ -101,10 +106,12 @@ void Connection::readHandler(const boost::system::error_code &error, size_t byte
 
 void Connection::sendResponse()
 {
-    asio::async_write(socket,
-                      asio::buffer(response->getData(), response->getSize()),
-                      boost::bind(&Connection::writeHandler,
-                                  shared_from_this(),
-                                  asio::placeholders::error,
-                                  asio::placeholders::bytes_transferred));
+    boost::system::error_code error;
+    size_t bytesTransferred =
+            asio::write(socket,
+                        asio::buffer(response->getData(),
+                        response->getSize()),
+                        error);
+
+    writeHandler(error, bytesTransferred);
 }

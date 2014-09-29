@@ -25,7 +25,8 @@ Config ConfigParser::load(const std::string &configFile)
         config.port = pt.get<unsigned short>("port", config.port);
         config.root = pt.get<std::string>("root", config.root);
         config.index = pt.get<std::string>("index", config.index);
-        config.threadPoolSize = pt.get<size_t>("threadPoolSize", config.threadPoolSize);
+        config.acceptorsPoolSize = pt.get<size_t>("acceptorsPoolSize", config.acceptorsPoolSize);
+        config.executorsPoolSize = pt.get<size_t>("executorsPoolSize", config.executorsPoolSize);
         config.cacheSize = pt.get<size_t>("cacheSize", config.cacheSize);
         config.cachedLifeTime = pt.get<size_t>("cachedLifeTime", config.cachedLifeTime);
     } catch(const boost::property_tree::ptree_error &e) {
