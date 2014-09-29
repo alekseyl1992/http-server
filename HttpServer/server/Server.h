@@ -6,6 +6,7 @@
 #include "config/Config.h"
 #include "fs/FileSupplier.h"
 #include "ServicePool.h"
+#include "AcceptorsPool.h"
 #include "Connection.h"
 #include "asio_common.h"
 
@@ -29,6 +30,7 @@ private:
     FileSupplier fileSupplier;
     ResponseBuilder responseBuilder;
     ServicePool servicePool;
+    AcceptorsPool acceptorsPool;
 
     boost::shared_ptr<asio::ip::tcp::acceptor> acceptor;
     boost::shared_ptr<boost::asio::signal_set> signals;

@@ -24,10 +24,6 @@ void ServicePool::startAll()
         threads.push_back(boost::make_shared<boost::thread>(
                               boost::bind(&boost::asio::io_service::run, services[i])));
     }
-
-    for (auto thread: threads)
-        if (thread->joinable())
-            thread->join();
 }
 
 void ServicePool::stopAll()
@@ -36,6 +32,13 @@ void ServicePool::stopAll()
 
     for (auto service: services)
         service->stop();
+}
+
+void ServicePool::join()
+{
+    for (auto thread: threads)
+        if (thread->joinable())
+            thread->join();
 }
 
 asio::io_service &ServicePool::getService()

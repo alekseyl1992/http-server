@@ -1,5 +1,5 @@
-#ifndef SERVICEPOOL_H
-#define SERVICEPOOL_H
+#ifndef ACCEPTORSPOOL_H
+#define ACCEPTORSPOOL_H
 
 #include <functional>
 #include <boost/thread.hpp>
@@ -7,12 +7,12 @@
 
 #include "asio_common.h"
 
-class ServicePool
+class AcceptorsPool
 {
     typedef boost::shared_ptr<boost::thread> thread_ptr;
 public:
-    ServicePool(size_t servicesCount);
-    ~ServicePool();
+    AcceptorsPool(size_t threadsCount);
+    ~AcceptorsPool();
 
     void startAll();
     void stopAll();
@@ -22,12 +22,9 @@ public:
     asio::io_service &getService();
 
 private:
-    size_t servicesCount = 0;
-    std::deque<io_service_ptr> services;
-    size_t currentService = 0;
-
-    std::deque<asio::io_service::work> serviceWorks;
+    size_t threadsCount = 0;
+    io_service_ptr service;
+    asio::io_service::work serviceWork;
     std::vector<thread_ptr> threads;
 };
-
-#endif // SERVICEPOOL_H
+#endif // ACCEPTORSPOOL_H

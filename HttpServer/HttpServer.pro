@@ -16,7 +16,8 @@ SOURCES += main.cpp \
     server/ServicePool.cpp \
     server/Connection.cpp \
     test/fs/FileSupplierTest.cpp \
-    server/Logger.cpp
+    server/Logger.cpp \
+    server/AcceptorsPool.cpp
 
 HEADERS += \
     Config.h \
@@ -42,7 +43,8 @@ HEADERS += \
     server/common.h \
     server/Connection.h \
     server/asio_common.h \
-    server/Logger.h
+    server/Logger.h \
+    server/AcceptorsPool.h
 
 
 QMAKE_CXXFLAGS += -std=c++1y \

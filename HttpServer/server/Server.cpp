@@ -8,6 +8,7 @@ Server::Server(const Config &config)
     : config(config)
     , fileSupplier(config.root, config.index, config.cachedLifeTime)
     , servicePool(config.threadPoolSize)
+    , acceptorsPool(config.acceptorsPoolSize)
 {
 }
 
@@ -19,7 +20,7 @@ Server::~Server()
 void Server::start()
 {
     acceptor = boost::make_shared<asio::ip::tcp::acceptor>(
-                servicePool.getService(),
+                acceptorsPool.getService(),
                 asio::ip::tcp::endpoint(
                     asio::ip::tcp::v4(),
                     config.port));
@@ -33,7 +34,11 @@ void Server::start()
               << config.toString()
               << std::endl;
 
+    acceptorsPool.startAll();
     servicePool.startAll();
+
+    acceptorsPool.join();
+    servicePool.join();
 }
 
 void Server::initSignals()
