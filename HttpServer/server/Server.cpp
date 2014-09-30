@@ -7,7 +7,7 @@
 Server::Server(const Config &config)
     : config(config)
     , fileSupplier(config.root, config.index, config.cachedLifeTime)
-    , executorsPool(config.acceptorsPoolSize)
+    , executorsPool(config.executorsPoolSize)
     , acceptorsPool(config.acceptorsPoolSize)
 {
 }
@@ -71,7 +71,7 @@ void Server::acceptHandler(boost::shared_ptr<Connection> connection,
     if (!error) {
         //std::cout << "Client accepted!" << std::endl;
 
-        connection->start();
+        executorsPool.getService().post(boost::bind(&Connection::start, connection));
         acceptNextClient();
     }
 }
